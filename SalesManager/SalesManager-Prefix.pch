@@ -1,0 +1,286 @@
+//
+//  Prefix header
+//
+//  The contents of this file are implicitly included at the beginning of every source file.
+//
+
+#import <Availability.h>
+
+
+#ifndef __IPHONE_5_0
+#warning "This project uses features only available in iOS SDK 5.0 and later."
+#endif
+#ifdef __OBJC__
+    #import <UIKit/UIKit.h>
+    #import <Foundation/Foundation.h>
+#import<EventKit/EventKit.h>
+#import"YWAppDelegate.h"
+#import <SystemConfiguration/SystemConfiguration.h>
+#import <MobileCoreServices/MobileCoreServices.h>
+
+#import "AFNetworking.h"
+#import "TOOL.h"
+//#import "PullingRefreshTableView.h"
+#import "NSUserDefaults+Additions.h"
+#import "YWbaseVC.h"
+#import "YWBaseTableVC.h"
+#import "SVProgressHUD.h"
+
+
+#import "YFormDBM.h"
+#import "GCDataBaseManager.h"
+#import "InsertTextField.h"
+#import "YWNetRequest.h"
+
+
+#define LIMING1 @"600008"
+#define LIMING2 @"600592"
+
+//#define VERSIONS @"2.2.1"
+//#define API_headaddr @"http://rest.test.111151.com/"
+
+#ifdef __OPTIMIZE__
+#define NSLog(...)
+#endif
+#define VERSIONS @"3.1.3"
+#define API_headaddr @"http://rest.yewu.feesun.com/"
+
+
+
+#define kTIMEOUT 20
+
+#define kDeviceWidth [UIScreen mainScreen].bounds.size.width
+#define KDeviceHeight [UIScreen mainScreen].bounds.size.height
+#define NAVIGATIONCOLOR  [UIColor colorWithRed:48/255.f  green:135/255.f  blue:221/255.f alpha:1]
+
+
+#define APP_URL @"http://itunes.apple.com/lookup?id=592930826" //https://itunes.apple.com/cn/app/ye-wu-dian-dian-tong/id592930826
+//#define NAVIGATIONCOLOR  [UIColor colorWithRed:((float)((0x0C71BC & 0xFF0000) >> 16))/255.0 green:((float)((0x0C71BC & 0xFF00) >> 8))/255.0 blue:((float)(0x0C71BC & 0xFF))/255.0 alpha:1.0]
+#define HEADTITLECOLOR [UIColor colorWithRed:((float)((0x0C71BA & 0xFF0000) >> 16))/255.0 green:((float)((0x0C71BA & 0xFF00) >> 8))/255.0 blue:((float)(0x0C71BA & 0xFF))/255.0 alpha:1.0]
+#define BGCOLOR [UIColor colorWithRed:((float)((0xF0F5F6 & 0xFF0000) >> 16))/255.0 green:((float)((0xF0F5F6 & 0xFF00) >> 8))/255.0 blue:((float)(0xF0F5F6 & 0xFF))/255.0 alpha:1.0]
+#define BIGTITLECOLOR [UIColor colorWithRed:((float)((0x393939 & 0xFF0000) >> 16))/255.0 green:((float)((0x393939 & 0xFF00) >> 8))/255.0 blue:((float)(0x393939 & 0xFF))/255.0 alpha:1.0]
+#define SMALLTITLECOLOR [UIColor colorWithRed:((float)((0x858585 & 0xFF0000) >> 16))/255.0 green:((float)((0x858585 & 0xFF00) >> 8))/255.0 blue:((float)(0x858585 & 0xFF))/255.0 alpha:1.0]
+#define CELLBGCOLOR [UIColor colorWithRed:((float)((0xF82624 & 0xFF0000) >> 16))/255.0 green:((float)((0xF82624 & 0xFF00) >> 8))/255.0 blue:((float)(0xF82624 & 0xFF))/255.0 alpha:1.0]
+#define LINECOLOR  [UIColor colorWithRed:((float)((0xBEBEBE & 0xFF0000) >> 16))/255.0 green:((float)((0xBEBEBE & 0xFF00) >> 8))/255.0 blue:((float)(0xBEBEBE & 0xFF))/255.0 alpha:1.0]
+#define BORDERCOLOR [UIColor colorWithRed:((float)((0x8B8B8B & 0xFF0000) >> 16))/255.0 green:((float)((0x8B8B8B & 0xFF00) >> 8))/255.0 blue:((float)(0x8B8B8B & 0xFF))/255.0 alpha:1.0]
+#define PLACEHOLDERCOLOR [UIColor colorWithRed:((float)((0xD0D0D5 & 0xFF0000) >> 16))/255.0 green:((float)((0xD0D0D5 & 0xFF00) >> 8))/255.0 blue:((float)(0xD0D0D5 & 0xFF))/255.0 alpha:1.0]
+#define HEADHEIGHT 23.0
+#define HEADFONT 9
+#define BIGFONT 14
+#define SMALLFONT 11
+
+NSString* userID;
+NSString* randCode;
+NSString* userName;
+NSString* company_Code;
+
+NSString *XuLieNum;
+NSString *Verifi;
+NSString *PhoneNum;
+
+NSString *RegisCompanyNum;
+NSString *RegisLoginNum;
+NSString *RegisPassword;
+NSString *RegisUserID;
+NSString *RegisRandcode;
+
+NSUserDefaults* userDefaults;
+
+BOOL isNetWork;
+BOOL isleftListTable;
+
+
+#define IS_IOS8 (([[[UIDevice currentDevice] systemVersion] floatValue] >= 8.0)? (YES):(NO))
+#define IS_IOS7 (([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0)? (YES):(NO))
+#define IS_IOS6 (([[[UIDevice currentDevice] systemVersion] floatValue] >= 6.0)? (YES):(NO))
+#define SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(v)  ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] != NSOrderedAscending)
+#define IS_4INCH ([UIScreen instancesRespondToSelector:@selector(currentMode)] ? CGSizeEqualToSize(CGSizeMake(640, 1136), [[UIScreen mainScreen] currentMode].size) : NO)
+#define NUMBEROFONEPAGE 20          //每次请求获取&加载条数
+
+#pragma mark - 登陆
+//http://rest.yewu.feesun.cn/?mod=login&fun=login&user=7232275&pwd=123456&com_code=600075&versions=2.2.2&token=&stype=1
+#define  API_logIn(headaddr,userid,randcode,limit,offset,minid,name,status,partnameid,lgroup)  [[NSString stringWithFormat:@"%@/ywapi/commerber.php?userid=%@&randcode=%@&option=get_list&limit=%@&offset=%@&minid=%@&name=%@&status=%@&partnameid=%@&lgroup=%@",headaddr,userid,randcode,limit,offset,minid,name,status,partnameid,lgroup]stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]
+
+#pragma mark - 1人员管理
+//http://yewu.feesun.com/ywapi/commerber.php?userid=600001&randcode=0831bf45eb174bbd493971d662f9795c&option=get_list&limit=&offset=&minid=&name=&status=&partnameid=&lgroup=&cs=1
+#define  API_getMemberlist(headaddr,userid,randcode,limit,offset,minid,name,status,partnameid,lgroup)  [[NSString stringWithFormat:@"%@/ywapi/commerber.php?userid=%@&randcode=%@&option=get_list&limit=%@&offset=%@&minid=%@&name=%@&status=%@&partnameid=%@&lgroup=%@",headaddr,userid,randcode,limit,offset,minid,name,status,partnameid,lgroup]stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]
+
+//http://yewu.feesun.com/ywapi/commerber.php?userid=600001&randcode=0831bf45eb174bbd493971d662f9795c&option=get&muserid=355&cs=1
+#define  API_getMemberById(headaddr,userid,randcode,muserid)  [[NSString stringWithFormat:@"%@/ywapi/commerber.php?userid=%@&randcode=%@&option=get&muserid=%@",headaddr,userid,randcode,muserid]stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]
+
+//http://yewu.feesun.com/ywapi/commerber.php?userid=600001&randcode=0831bf45eb174bbd493971d662f9795c&option=add&title=tiantitle&email=tianemail&pwd=tianpwd&partnameid=1&lgroup=1&mobile=138323232
+#define  API_addMember(headaddr,userid,randcode,title,email,pwd,partnameid,lgroup,mobile)  [[NSString stringWithFormat:@"%@/ywapi/commerber.php?userid=%@&randcode=%@&option=add&title=%@&email=%@&pwd=%@&partnameid=%@&lgroup=%@&mobile=%@",headaddr,userid,randcode,title,email,pwd,partnameid,lgroup,mobile]stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]
+
+//http://yewu.feesun.com/ywapi/commerber.php?userid=600001&randcode=0831bf45eb174bbd493971d662f9795c&option=add&title=tiantit&email=tianema&pwd=tianp&partnameid=15&lgroup=0&mobile=1383232&muserid=380
+#define  API_modifyMember(headaddr,userid,randcode,title,email,pwd,partnameid,lgroup,mobile,muserid)  [[NSString stringWithFormat:@"%@/ywapi/commerber.php?userid=%@&randcode=%@&option=add&title=%@&email=%@&pwd=%@&partnameid=%@&lgroup=%@&mobile=%@&muserid=%@",headaddr,userid,randcode,title,email,pwd,partnameid,lgroup,mobile,muserid]stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]
+
+//http://yewu.feesun.com/ywapi/commerber.php?userid=600001&randcode=0831bf45eb174bbd493971d662f9795c&option=del&muserid=381
+#define  API_deleteMember(headaddr,userid,randcode,muserid)  [[NSString stringWithFormat:@"%@/ywapi/commerber.php?userid=%@&randcode=%@&option=del&muserid=%@",headaddr,userid,randcode,muserid]stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]
+
+//http://yewu.feesun.com/ywapi/commerber.php?userid=600001&randcode=0831bf45eb174bbd493971d662f9795c&option=yewudisabled&muserid=355
+#define  API_disabledMember(headaddr,userid,randcode,muserid)  [[NSString stringWithFormat:@"%@/ywapi/commerber.php?userid=%@&randcode=%@&option=yewudisabled&muserid=%@",headaddr,userid,randcode,muserid]stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]
+
+//http://yewu.feesun.com/ywapi/commerber.php?userid=600001&randcode=0831bf45eb174bbd493971d662f9795c&option=yewuenabled&muserid=355
+#define  API_enabledMember(headaddr,userid,randcode,muserid)  [[NSString stringWithFormat:@"%@/ywapi/commerber.php?userid=%@&randcode=%@&option=yewuenabled&muserid=%@",headaddr,userid,randcode,muserid]stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]
+
+#pragma mark - 2工作汇报类型
+//http://yewu.feesun.com/ywapi/formtype.php?userid=600001&randcode=0831bf45eb174bbd493971d662f9795c&option=get_list&limit=&offset=&minid=&cs=1
+#define  API_reportTypeList(headaddr,userid,randcode,limit,offset,minid)  [[NSString stringWithFormat:@"%@/ywapi/formtype.php?userid=%@&randcode=%@&option=get_list&limit=%@&offset=%@&minid=%@",headaddr,userid,randcode,limit,offset,minid]stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]
+
+//http://yewu.feesun.com/ywapi/formtype.php?userid=600001&randcode=0831bf45eb174bbd493971d662f9795c&option=get&formtypeid=67&cs=1
+#define  API_reportTypeById(headaddr,userid,randcode,formtypeid)  [[NSString stringWithFormat:@"%@/ywapi/formtype.php?userid=%@&randcode=%@&option=get&formtypeid=%@",headaddr,userid,randcode,formtypeid]stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]
+
+//http://yewu.feesun.com/ywapi/formtype.php?userid=600001&randcode=0831bf45eb174bbd493971d662f9795c&option=add&title=reporttypetitle&itemname=summary&partname=&partnameid=1&isline=1&ismap=1&isreply=1  itemname only definite??
+#define  API_addReportType(headaddr,userid,randcode,title,itemname,partname,partnameid,isline,ismap,isreply)  [[NSString stringWithFormat:@"%@/ywapi/formtype.php?userid=%@&randcode=%@&option=add&title=%@&itemname=%@&partname=%@&partnameid=%@&isline=%@&ismap=%@&isreply=%@",headaddr,userid,randcode,title,itemname,partname,partnameid,isline,ismap,isreply]stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]
+
+//http://yewu.feesun.com/ywapi/formtype.php?userid=600001&randcode=0831bf45eb174bbd493971d662f9795c&option=edit&title=weeg&itemname=summary&partname=&partnameid=1&isline=0&ismap=1&isreply=&formtypeid=111
+#define  API_modifyReportType(headaddr,userid,randcode,title,itemname,partname,partnameid,isline,ismap,isreply,formtypeid)  [[NSString stringWithFormat:@"%@/ywapi/formtype.php?userid=%@&randcode=%@&option=edit&title=%@&itemname=%@&partname=%@&partnameid=%@&isline=%@&ismap=%@&isreply=%@&formtypeid=%@",headaddr,userid,randcode,title,itemname,partname,partnameid,isline,ismap,isreply,formtypeid]stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]
+
+//http://yewu.feesun.com/ywapi/formtype.php?userid=600001&randcode=0831bf45eb174bbd493971d662f9795c&option=del&formtypeid=111
+#define  API_deleteReportType(headaddr,userid,randcode,formtypeid)  [[NSString stringWithFormat:@"%@/ywapi/formtype.php?userid=%@&randcode=%@&option=del&formtypeid=%@",headaddr,userid,randcode,formtypeid]stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]
+
+
+#pragma mark - 3工作汇报内容
+//http://yewu.feesun.com/ywapi/form.php?userid=600001&randcode=0831bf45eb174bbd493971d662f9795c&option=get_list&formtypeid=99&cs=1
+#define  API_getReportContentByTypeid(headaddr,userid,randcode,formtypeid)  [[NSString stringWithFormat:@"%@/ywapi/form.php?userid=%@&randcode=%@&option=get_list&formtypeid=%@",headaddr,userid,randcode,formtypeid]stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]
+
+//http://yewu.feesun.com/ywapi/form.php?userid=600001&randcode=0831bf45eb174bbd493971d662f9795c&option=get&formtypeid=2&formid=27&cs=1
+#define  API_getReportContentById(headaddr,userid,randcode,formtypeid,formid)  [[NSString stringWithFormat:@"%@/ywapi/form.php?userid=%@&randcode=%@&option=get&formtypeid=%@&formid=%@",headaddr,userid,randcode,formtypeid,formid]stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]
+
+//http://yewu.feesun.com/ywapi/form.php?userid=600001&randcode=0831bf45eb174bbd493971d662f9795c&option=add&formtypeid=23&title=title11&formname=formname11&textbox=view&unit=&isneed=1
+#define  API_addContentForReportType(headaddr,userid,randcode,formtypeid,title,formname,textbox,unit,isneed)  [[NSString stringWithFormat:@"%@/ywapi/form.php?userid=%@&randcode=%@&option=add&formtypeid=%@&title=%@&formname=%@&textbox=%@&unit=%@&isneed=%@",headaddr,userid,randcode,formtypeid,title,formname,textbox,unit,isneed]stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]
+
+//http://yewu.feesun.com/ywapi/form.php?userid=600001&randcode=0831bf45eb174bbd493971d662f9795c&option=add&formtypeid=23&title=title11&formname=formname11&textbox=datePicker&unit=&isneed=1&formid=241  datePicker no useful
+#define  API_modifyContentForReportType(headaddr,userid,randcode,formtypeid,title,formname,textbox,unit,isneed,formid)  [[NSString stringWithFormat:@"%@/ywapi/form.php?userid=%@&randcode=%@&option=add&formtypeid=%@&title=%@&formname=%@&textbox=%@&unit=%@&isneed=%@&formid=%@",headaddr,userid,randcode,formtypeid,title,formname,textbox,unit,isneed,formid]stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]
+
+#pragma mark - 4工作汇报详细（日志形式展示）
+//http://yewu.feesun.com/ywapi/index.php?userid=600001&randcode=0831bf45eb174bbd493971d662f9795c&partname=&option=get_list&limit=20&offset=0&muserid=133&minid=&starttime=&endtime=&isreply=&formtype=19&cs=1
+#define  API_getReportlistByReportType(headaddr,userid,randcode,partname,limit,offset,muserid,minid,starttime,endtime,isreply,formtype)  [[NSString stringWithFormat:@"%@/ywapi/index.php?userid=%@&randcode=%@&partname=%@&option=get_list&limit=%@&offset=%@&muserid=%@&minid=%@&starttime=%@&endtime=%@&isreply=%@&formtype=%@",headaddr,userid,randcode,partname,limit,offset,muserid,minid,starttime,endtime,isreply,formtype]stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]
+
+//http://yewu.feesun.com/ywapi/index.php?userid=600001&randcode=0831bf45eb174bbd493971d662f9795c&partname=&option=get&worklogid=9975&cs=1
+#define  API_getReportById(headaddr,userid,randcode,partname,worklogid)  [[NSString stringWithFormat:@"%@/ywapi/index.php?userid=%@&randcode=%@&partname=%@&option=get&worklogid=%@",headaddr,userid,randcode,partname,worklogid]stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]
+
+//http://yewu.feesun.com/ywapi/index.php?userid=600001&randcode=0831bf45eb174bbd493971d662f9795c&partname=&option=reply&worklogid=9975&replyer=tianjing&reply=good%20job%20fighting!!
+#define  API_commitReplyById(headaddr,userid,randcode,partname,worklogid,replyer,reply)  [[NSString stringWithFormat:@"%@/ywapi/index.php?userid=%@&randcode=%@&partname=%@&option=reply&worklogid=%@&replyer=%@&reply=%@",headaddr,userid,randcode,partname,worklogid,replyer,reply]stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]
+
+//http://yewu.feesun.com/ywapi/index.php?userid=600001&randcode=0831bf45eb174bbd493971d662f9795c&partname=&option=del&worklogid=10626
+#define  API_deleteReport(headaddr,userid,randcode,partname,worklogid)  [[NSString stringWithFormat:@"%@/ywapi/index.php?userid=%@&randcode=%@&partname=%@&option=del&worklogid=%@",headaddr,userid,randcode,partname,worklogid]stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]
+
+#pragma mark - 6通知管理
+
+//http://rest.yewu.feesun.cn/?mod=notice&fun=get_list&user_id=373&rand_code=d76b8a3d38e45e3b2b8a95ec493d0620&limit=40&offset=0&versions=2.1.2&stype=1&cs=1
+#define  API_getNoticeList(headaddr,userid,randcode,limit,offset,versions,stype)  [[NSString stringWithFormat:@"%@/?mod=notice&fun=get_list&user_id=%@&rand_code=%@&limit=%d&offset=%d&versions=%@&stype=%d",headaddr,userid,randcode,limit,offset,versions,stype]stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]
+
+//http://rest.yewu.feesun.cn/?mod=notice&fun=get&user_id=373&rand_code=d76b8a3d38e45e3b2b8a95ec493d0620&id=412&versions=2.1.2&stype=1&cs=1
+#define  API_getNoticeById(headaddr,userid,randcode,id,versions,stype)  [[NSString stringWithFormat:@"%@/?mod=notice&fun=get&user_id=%@&rand_code=%@&id=%@&versions=%@&stype=%@",headaddr,userid,randcode,id,versions,stype]stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]
+
+
+//http://rest.yewu.feesun.cn/?mod=notice&fun=addpost&user_id=373&rand_code=d76b8a3d38e45e3b2b8a95ec493d0620&notice_value[title]=lallllll&notice_value[starttime]=1356930349&notice_value[content]=contents&notice_value[toid]=373,372&notice_value[topartname]=41&versions=2.1.2&stype=1
+#define  API_addNotice(headaddr,userid,randcode,title,starttime,content,toid,topartname,versions,stype)  [[NSString stringWithFormat:@"%@?mod=notice&fun=addpost&user_id=%@&rand_code=%@&notice_value[title]=%@&notice_value[starttime]=%@&notice_value[content]=%@&notice_value[toid]=%@&notice_value[topartname]=%@&versions=%@&stype=%@",headaddr,userid,randcode,title,starttime,content,toid,topartname,versions,stype]stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]
+
+#pragma mark - 7任务管理 33
+
+//http://rest.yewu.feesun.cn/?mod=task&fun=get_list&user_id=373&rand_code=d76b8a3d38e45e3b2b8a95ec493d0620&limit=10&offset=0&is_end=2&versions=2.1.2&stype=1&cs=1
+//http://rest.yewu.feesun.cn/?mod=task&fun=get_list&user_id=373&rand_code=d76b8a3d38e45e3b2b8a95ec493d0620&minid=【获取比id大的值，要把最小的那个id给我】&maxid=【获取比id小的值，那么要把最大的id给我】&limit=10&offset=0&is_end=2&versions=2.1.2&stype=1&cs=1
+#define  API_getTaskList(headaddr,userid,randcode,limit,offset,is_end,versions,stype,minid,maxid,ismine,lastdotime)  [[NSString stringWithFormat:@"%@/?mod=task&fun=get_list&user_id=%@&rand_code=%@&limit=%d&offset=%d&is_end=%d&versions=%@&stype=%@&minid=%@&maxid=%@&ismine=%@&lastdotime=%@",headaddr,userid,randcode,limit,offset,is_end,versions,stype,minid,maxid,ismine,lastdotime]stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]
+
+//http://rest.yewu.feesun.cn/?mod=task&fun=get&user_id=373&rand_code=d76b8a3d38e45e3b2b8a95ec493d0620&taskid=177&versions=2.1.2&stype=1&cs=1
+#define  API_getTaskById(headaddr,userid,randcode,taskid,versions,stype)  [[NSString stringWithFormat:@"%@/?mod=task&fun=get&user_id=%@&rand_code=%@&taskid=%@&versions=%@&stype=%@",headaddr,userid,randcode,taskid,versions,stype]stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]
+
+
+
+//http://rest.yewu.feesun.cn/?mod=task&fun=addtask&user_id=373&rand_code=d76b8a3d38e45e3b2b8a95ec493d0620&task_value[title]=tasktitle&task_value[endtime]=1356930349&task_value[content]=contents&task_value[toid]=378&versions=2.1.2&stype=1
+#define  API_addTask(headaddr,userid,randcode,title,endtime,content,toid,versions,stype)  [[NSString stringWithFormat:@"%@/?mod=task&fun=addtask&user_id=%@&rand_code=%@&task_value[title]=%@&task_value[endtime]=%d&task_value[content]=%@&task_value[toid]=%@&versions=%@&stype=%@",headaddr,userid,randcode,title,endtime,content,toid,versions,stype]stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]
+
+//http://rest.yewu.feesun.cn/?mod=task&fun=post&user_id=373&rand_code=d76b8a3d38e45e3b2b8a95ec493d0620&taskid=178&endcontent=11111&versions=2.1.2&stype=1
+#define  API_noteTask(headaddr,userid,randcode,taskid,endcontent,versions,stype)  [[NSString stringWithFormat:@"%@/?mod=task&fun=post&user_id=%@&rand_code=%@&taskid=%@&endcontent=%@&versions=%@&stype=%@",headaddr,userid,randcode,taskid,endcontent,versions,stype]stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]
+
+//http://rest.yewu.feesun.cn/?mod=task&fun=edittask&user_id=373&rand_code=d76b8a3d38e45e3b2b8a95ec493d0620&taskid=188&task_value[title]=tasktitle&task_value[endtime]=1356930349&task_value[content]=contents&task_value[toid]=378&versions=2.1.2&stype=1
+#define  API_modifyTaskById(headaddr,userid,randcode,taskid,title,endtime,content,toid,versions,stype)  [[NSString stringWithFormat:@"%@/?mod=task&fun=edittask&user_id=%@&rand_code=%@&taskid=%@&task_value[title]=%@&task_value[endtime]=%@&task_value[content]=%@&task_value[toid]=%@&versions=%@&stype=%@",headaddr,userid,randcode,taskid,title,endtime,content,toid,versions,stype]stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]
+
+//http://rest.yewu.feesun.cn/?mod=task&fun=locktask&user_id=373&rand_code=d76b8a3d38e45e3b2b8a95ec493d0620&taskid=188&lock=1&versions=2.2.2&stype=1
+#define  API_deleteTask(headaddr,userid,randcode,taskid)  [[NSString stringWithFormat:@"%@/ywapi/task.php?userid=%@&randcode=%@&option=del&taskid=%@",headaddr,userid,randcode,taskid]stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]
+
+//http://rest.yewu.feesun.cn/?mod=task&fun=locktask&user_id=373&rand_code=d76b8a3d38e45e3b2b8a95ec493d0620&taskid=188&lock=1&versions=2.2.2&stype=1
+#define  API_lockTask(headaddr,userid,randcode,taskid,lock,versions,stype)  [[NSString stringWithFormat:@"%@/?mod=task&fun=locktask&user_id=%@&rand_code=%@&taskid=%@&lock=%@&versions=%@&stype=%@",headaddr,userid,randcode,taskid,lock,versions,stype]stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]
+
+//http://rest.yewu.feesun.com/?mod=task&fun=replytask&user_id=1011&rand_code=665b126ffc365fbe9e2afbb281929ef4&versions=3.0.1&stype=1&task_value[reply]=aaaa&task_value[id]=5367
+#define  API_sendTaskReply(headaddr,userid,randcode,versions,stype,taskreply,taskid)  [[NSString stringWithFormat:@"%@/?mod=task&fun=replytask&user_id=%@&rand_code=%@&versions=%@&stype=%@&task_value[reply]=%@&task_value[id]=%@",headaddr,userid,randcode,versions,stype,taskreply,taskid]stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]
+
+#pragma mark - 8个人图库管理
+//http://yewu.feesun.com/api/myphoto.php?userid=600001&randcode=0831bf45eb174bbd493971d662f9795c&partname=&option=get_user&cs=1 repeat with getmemberlist
+#define  API_getAllMemberById(headaddr,userid,randcode,partname)  [[NSString stringWithFormat:@"%@/api/myphoto.php?userid=%@&randcode=%@&partname=%@&option=get_user",headaddr,userid,randcode,title,content,preroot]stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]
+
+
+//http://yewu.feesun.com/api/myphoto.php?userid=600001&randcode=0831bf45eb174bbd493971d662f9795c&partname=&option=get_list&limit=&offset=&cs=1 getphotolist
+#define  API_getUser PhotoListById(headaddr,userid,randcode,partname,limit,offset)  [[NSString stringWithFormat:@"%@/api/myphoto.php?userid=%@&randcode=%@&partname=%@&option=get_list&limit=%@&offset=%@",headaddr,userid,randcode,partname,limit,offset]stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]
+
+
+
+//http://yewu.feesun.com/api/myphoto.php?userid=600001&randcode=0831bf45eb174bbd493971d662f9795c&partname=&option=get&photoid=2696&cs=1
+#define  API_getUserPhotoById(headaddr,userid,randcode,partname,photoid)  [[NSString stringWithFormat:@"%@/api/myphoto.php?userid=%@&randcode=%@&partname=%@&option=get&photoid=%@",headaddr,userid,randcode,partname,photoid]stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]
+
+
+
+#pragma mark - 9图片管理 333
+//http://rest.yewu.feesun.cn/?mod=album&fun=get_allphoto&user_id=373&rand_code=d76b8a3d38e45e3b2b8a95ec493d0620&photoid=584&versions=2.1.2&stype=1&cs=1
+#define  API_getAllPhotos(headaddr,userid,randcode,photoid,versions,stype)  [[NSString stringWithFormat:@"%@/?mod=album&fun=get_allphoto&user_id=%@&rand_code=%@&photoid=%@&versions=%@&stype=%@",headaddr,userid,randcode,photoid,versions,stype]stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]
+
+//http://rest.yewu.feesun.cn/?mod=album&fun=get_list&user_id=373&rand_code=d76b8a3d38e45e3b2b8a95ec493d0620&versions=2.1.2&stype=1&cs=1
+#define  API_getAlbumList(headaddr,userid,randcode,versions,stype,limit,offset)  [[NSString stringWithFormat:@"%@/?mod=album&fun=get_list&user_id=%@&rand_code=%@&versions=%@&stype=%@&limit=%d&offset=%d",headaddr,userid,randcode,versions,stype,limit,offset]stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]
+
+
+//http://yewu.feesun.com/ywapi/photo.php?userid=600001&randcode=0831bf45eb174bbd493971d662f9795c&option=add&title=xiangcheimprove
+#define  API_addAlbum(headaddr,userid,randcode,title)  [[NSString stringWithFormat:@"%@/ywapi/photo.php?userid=%@&randcode=%@&option=add&title=%@",headaddr,userid,randcode,title]stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]
+
+
+//http://rest.yewu.feesun.cn/?mod=album&fun=get&user_id=373&rand_code=d76b8a3d38e45e3b2b8a95ec493d0620&albumid=67&versions=2.1.2&stype=1&cs=1
+#define  API_getPhotoListFromAlbum(headaddr,userid,randcode,albumid,versions,stype,limit,offset)  [[NSString stringWithFormat:@"%@?mod=album&fun=get&user_id=%@&rand_code=%@&albumid=%d&versions=%@&stype=%@&limit=%d&offset=%d",headaddr,userid,randcode,albumid,versions,stype,limit,offset]stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]
+
+
+//http://yewu.feesun.com/ywapi/photo.php?userid=600001&randcode=0831bf45eb174bbd493971d662f9795c&option=setcover&photoid=468&comalbumid=50
+#define  API_setCover(headaddr,userid,randcode,photoid,comalbumid)  [[NSString stringWithFormat:@"%@/ywapi/photo.php?userid=%@&randcode=%@&option=setcover&photoid=%@&comalbumid=%@",headaddr,userid,randcode,photoid,comalbumid]stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]
+
+
+//http://yewu.feesun.com/ywapi/photo.php?userid=600001&randcode=0831bf45eb174bbd493971d662f9795c&option=delphoto&photoid=422&comalbumid=50 //comalbumid is needed
+#define  API_deletePhotoFromAlbum(headaddr,userid,randcode,photoid,comalbumid)  [[NSString stringWithFormat:@"%@/ywapi/photo.php?userid=%@&randcode=%@&option=delphoto&photoid=%@&comalbumid=%@",headaddr,userid,randcode,photoid,comalbumid]stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]
+
+#pragma mark- 10部门管理
+//http://yewu.feesun.com/ywapi/companypart.php?userid=600001&randcode=0831bf45eb174bbd493971d662f9795c&option=get_list&limit=&offset=&cs=1
+#define  API_getDepartmentList(headaddr,userid,randcode,limit,offset)  [[NSString stringWithFormat:@"%@/ywapi/companypart.php?userid=%@&randcode=%@&option=get_list&limit=%@&offset=%@",headaddr,userid,randcode,limit,offset]stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]
+
+//http://yewu.feesun.com/ywapi/companypart.php?userid=600001&randcode=0831bf45eb174bbd493971d662f9795c&option=get&partnameid=40&cs=1
+#define  API_getDepartmentById(headaddr,userid,randcode,partnameid)  [[NSString stringWithFormat:@"%@/ywapi/companypart.php?userid=%@&randcode=%@&option=get&partnameid=%@",headaddr,userid,randcode,partnameid]stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]
+
+//http://yewu.feesun.com/ywapi/companypart.php?userid=600001&randcode=0831bf45eb174bbd493971d662f9795c&option=add&title=tiandepartment
+#define  API_addDepartment(headaddr,userid,randcode,title)  [[NSString stringWithFormat:@"%@/ywapi/companypart.php?userid=%@&randcode=%@&option=add&title=%@",headaddr,userid,randcode,title]stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]
+
+//http://yewu.feesun.com/ywapi/companypart.php?userid=600001&randcode=0831bf45eb174bbd493971d662f9795c&option=edit&partnameid=46&title=tiand
+#define  API_modifyDepartment(headaddr,userid,randcode,partnameid,title)  [[NSString stringWithFormat:@"%@/ywapi/companypart.php?userid=%@&randcode=%@&option=edit&partnameid=%@&title=%@",headaddr,userid,randcode,partnameid,title]stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]
+
+//http://yewu.feesun.com/ywapi/companypart.php?userid=600001&randcode=0831bf45eb174bbd493971d662f9795c&option=del&partnameid=46
+#define  API_deleteDepartment(headaddr,userid,randcode,partnameid)  [[NSString stringWithFormat:@"%@/ywapi/companypart.php?userid=%@&randcode=%@&option=del&partnameid=%@",headaddr,userid,randcode,partnameid]stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]
+
+#pragma mark -setting
+//http://rest.yewu.feesun.cn/?mod=user&fun=safe&user_id=373&rand_code=d76b8a3d38e45e3b2b8a95ec493d0620&old_pwd=123456&new_pwd=123654&versions=2.1.2&stype=1
+#define  API_resetPassword(headaddr,userid,randcode,old_pwd,new_pwd,versions,stype)  [[NSString stringWithFormat:@"%@/?mod=user&fun=safe&user_id=%@&rand_code=%@&old_pwd=%@&new_pwd=%@&versions=%@&stype=%@",headaddr,userid,randcode,old_pwd,new_pwd,versions,stype]stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]
+
+//http://rest.yewu.feesun.cn/?mod=question&fun=post&user_id=373&rand_code=d76b8a3d38e45e3b2b8a95ec493d0620&question_value[content]=contentyou&question_value[beizhu]=beizhu&versions=2.1.2&stype=1
+#define  API_postSuggestion(headaddr,userid,randcode,content,beizhu,versions,stype)  [[NSString stringWithFormat:@"%@/?mod=question&fun=post&user_id=%@&rand_code=%@&question_value[content]=%@&question_value[beizhu]=%@&versions=%@&stype=%@",headaddr,userid,randcode,content,beizhu,versions,stype]stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]
+
+//#define  API_postSuggestion(headaddr,userid,randcode,content,beizhu,versions,stype)  [[NSString stringWithFormat:@"%@?mod=question&fun=post&user_id=%@&rand_code=%@&question_value[content]=%@&question_value[beizhu]=%@&versions=%@&stype=%@",headaddr,userid,randcode,content,beizhu,versions,stype]stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]
+
+//http://rest.yewu.feesun.cn/?mod=commemer&fun=get&user_id=373&rand_code=d76b8a3d38e45e3b2b8a95ec493d0620&id=373&versions=2.1.2&stype=1&cs=1
+
+#define  API_getPersonInfo(headaddr,userid,randcode,id,versions,stype)  [[NSString stringWithFormat:@"%@/?mod=commemer&fun=get&user_id=%@&rand_code=%@&id=%@&versions=%@&stype=%@",headaddr,userid,randcode,id,versions,stype]stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]
+
+// http://rest.yewu.feesun.cn/?mod=user&fun=uploaduserpic&user_id=373&rand_code=d76b8a3d38e45e3b2b8a95ec493d0620&userpic=http://yunpic.feesun.com/myphoto/comlogo/2013-12-20/13875290456101.jpg&versions=2.1.2&stype=1
+#define  API_sendPortrait(headaddr,userid,randcode,userpic,versions,stype)  [[NSString stringWithFormat:@"%@/?mod=user&fun=uploaduserpic&user_id=%@&rand_code=%@&userpic=%@&versions=%@&stype=%@",headaddr,userid,randcode,userpic,versions,stype]stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]
+
+
+
+
+#endif
+
+
+

@@ -1,0 +1,25 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "dc2c0106-0d05-4bf3-8f59-a33c2c54a57e++2968",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+    "dc2c0106-0d05-4bf3-8f59-a33c2c54a57e++2968" : {
+
+    }
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "dc2c0106-0d05-4bf3-8f59-a33c2c54a57e++2968" : 9223372036854775807
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "5EAAC712-38B4-43E9-B61C-16CC862ABB74",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "dc2c0106-0d05-4bf3-8f59-a33c2c54a57e++2968" : "SalesManager\/"
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "SalesManager",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "SalesManager.xcodeproj",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "http:\/\/code.taobao.org\/svn\/salerManager",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Subversion",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "dc2c0106-0d05-4bf3-8f59-a33c2c54a57e++2968"
+    }
+  ]
+}
